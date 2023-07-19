@@ -201,7 +201,7 @@ module HackerOne
         end
 
         @connection ||= Faraday.new(url: "https://api.hackerone.com/v1") do |faraday|
-          faraday.basic_auth(ENV["HACKERONE_TOKEN_NAME"], ENV["HACKERONE_TOKEN"])
+          faraday.request(:authorization, :basic, ENV["HACKERONE_TOKEN_NAME"], ENV["HACKERONE_TOKEN"])
           faraday.adapter Faraday.default_adapter
         end
       end
