@@ -1,6 +1,6 @@
 # Hackerone::Client
 
-A limited client library for interacting with HackerOne. Currently only supports a few operations:
+A limited client library for interacting with HackerOne in Ruby. Currently only supports a few operations:
 
 ```ruby
 client = HackerOne::Client::Api.new("github")
@@ -114,6 +114,6 @@ Setting this variable will make the client try to absorb errors, like a malforme
 Bug reports and pull requests are welcome on GitHub at https://github.com/oreoshake/hackerone-client. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
-## License
+## License 
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+This project is licensed under the terms of the MIT open source license. Please refer to [MIT](./LICENSE.txt) for the full terms.
