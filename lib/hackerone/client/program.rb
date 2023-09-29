@@ -80,7 +80,7 @@ module HackerOne
         response_body = make_get_request(
          "programs/#{id}/billing/balance"
        )
-       BillingBalance.new(response_body).balance
+        BillingBalance.new(response_body).balance
       end
 
       private
