@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [ '2.4.0', '2.5.0', '2.6.0', '2.7.2', '3.0.0', '3.3.0']
+        ruby: [ '2.6', '2.7', '3.0', '3.1', '3.2', '3.3']
     steps:
       - uses: actions/checkout@v2
       - name: Set up Ruby ${{ matrix.ruby }}
@@ -16,10 +16,7 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
       - name: Build and test with Rake with Ruby ${{ matrix.ruby }}
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-          bundle exec rake spec
+        run: bundle exec rake spec
   lint:
     name: Rubocop
     runs-on: ubuntu-latest
