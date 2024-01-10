@@ -2,7 +2,8 @@
 
 require "faraday"
 require "json"
-require "active_support/time"
+require "active_support"
+require "active_support/core_ext/numeric/time"
 require_relative "client/version"
 require_relative "client/report"
 require_relative "client/activity"
