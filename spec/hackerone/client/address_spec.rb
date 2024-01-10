@@ -4,7 +4,7 @@ require "spec_helper"
 
 RSpec.describe HackerOne::Client::Address do
   let (:address_data) do
-     {
+    {
       name: "Brian Anglin",
       street: " 88 Colin P Kelly Jr Street",
       city: "San Francisco",
