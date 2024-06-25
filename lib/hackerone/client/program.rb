@@ -51,6 +51,15 @@ module HackerOne
         groups.find { |group| group.name == groupname }
       end
 
+      def structured_scopes(page_number: 1, page_size: 100)
+        make_get_request(
+          "programs/#{id}/structured_scopes",
+          params: { page: { number: page_number, size: page_size } }
+        ).map do |data|
+          StructuredScope.new(id, data)
+        end
+      end
+
       def update_policy(policy:)
         body = {
           type: "program-policy",
@@ -83,8 +92,6 @@ module HackerOne
         BillingBalance.new(response_body).balance
       end
 
-      private
-
       def members
         @members ||= relationships.members[:data].map { |member_data| Member.new(member_data) }
       end
@@ -92,6 +99,12 @@ module HackerOne
       def groups
         @groups ||= relationships.groups[:data].map { |group_data| Group.new(group_data) }
       end
+
+      def organization
+        @organization ||= Organization.new(relationships.organization[:data])
+      end
+
+      private
 
       def relationships
         # Relationships are only included in the /programs/:id call,
