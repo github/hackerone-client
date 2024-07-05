@@ -45,7 +45,7 @@ module HackerOne
       end
 
       def programs
-        relationships.programs[:data].map{ Program.new(_1) }
+        relationships.programs[:data].map{ |p| Program.new(p) }
       end
 
       private
