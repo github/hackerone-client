@@ -20,7 +20,7 @@ module HackerOne
           "organizations/#{id}/assets",
           params: { page: { number: page_number, size: page_size } }
         ).map do |asset_data|
-          Asset.new(asset_data, id)
+          Asset.new(asset_data, self)
         end
       end
 

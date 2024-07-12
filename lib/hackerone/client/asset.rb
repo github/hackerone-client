@@ -23,17 +23,15 @@ module HackerOne
 
       delegate *DELEGATES, to: :attributes
 
-      def initialize(asset, organization_id)
+      attr_reader :organization
+
+      def initialize(asset, organization)
         @asset = asset
-        @organization_id = organization_id
+        @organization = organization
       end
 
       def id
         @asset[:id]
-      end
-
-      def organization_id
-        @organization_id
       end
 
       def update(attributes:)
@@ -41,7 +39,7 @@ module HackerOne
           type: "asset",
           attributes: attributes
         }
-        make_put_request("organizations/#{@organization_id}/assets/#{id}", request_body: body)
+        make_put_request("organizations/#{organization.id}/assets/#{id}", request_body: body)
       end
 
       def programs
