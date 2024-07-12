@@ -56,7 +56,7 @@ module HackerOne
           "programs/#{id}/structured_scopes",
           params: { page: { number: page_number, size: page_size } }
         ).map do |data|
-          StructuredScope.new(id, data)
+          StructuredScope.new(data, self)
         end
       end
 

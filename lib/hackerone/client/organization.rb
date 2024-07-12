@@ -19,8 +19,8 @@ module HackerOne
         make_get_request(
           "organizations/#{id}/assets",
           params: { page: { number: page_number, size: page_size } }
-        ).map do |data|
-          Asset.new(id, data)
+        ).map do |asset_data|
+          Asset.new(asset_data, id)
         end
       end
 

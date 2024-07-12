@@ -8,17 +8,22 @@ module HackerOne
       DELEGATES = [
         :asset_identifier,
         :asset_type,
+        :availability_requirement,
+        :confidentiality_requirement,
         :eligible_for_bounty,
         :eligible_for_submission,
         :instruction,
+        :integrity_requirement,
         :max_severity,
         :reference
       ]
 
       delegate *DELEGATES, to: :attributes
 
-      def initialize(program_id, scope)
-        @program_id = program_id
+      attr_reader :program
+
+      def initialize(scope, program = nil)
+        @program = program
         @scope = scope
       end
 
@@ -26,16 +31,12 @@ module HackerOne
         @scope[:id]
       end
 
-      def program_id
-        @program_id
-      end
-
       def update(attributes:)
         body = {
           type: "structured-scope",
           attributes: attributes
         }
-        make_put_request("programs/#{@program_id}/structured_scopes/#{id}", request_body: body)
+        make_put_request("programs/#{program.id}/structured_scopes/#{id}", request_body: body)
       end
 
       private

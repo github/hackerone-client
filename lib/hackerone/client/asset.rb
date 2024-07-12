@@ -23,9 +23,9 @@ module HackerOne
 
       delegate *DELEGATES, to: :attributes
 
-      def initialize(organization_id, asset)
-        @organization_id = organization_id
+      def initialize(asset, organization_id)
         @asset = asset
+        @organization_id = organization_id
       end
 
       def id
