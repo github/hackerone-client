@@ -3,8 +3,6 @@
 require "spec_helper"
 
 RSpec.describe HackerOne::Client::Asset do
-  let(:api) { HackerOne::Client::Api.new("github") }
-
   before(:all) do
     ENV["HACKERONE_TOKEN_NAME"] = "foo"
     ENV["HACKERONE_TOKEN"] = "bar"
@@ -116,6 +114,11 @@ RSpec.describe HackerOne::Client::Asset do
   "links": {}
 }
     JSON2
+  end
+
+  after(:each) do
+    # clear cached programs to prevent contaminatin between tests
+    HackerOne::Client::Program.instance_variable_set(:@my_programs, nil)
   end
 
   let(:program) do
