@@ -4,7 +4,7 @@ require "bundler/setup"
 require "hackerone/client"
 require "pry"
 require "vcr"
-require 'webmock/rspec'
+require "webmock/rspec"
 
 RSpec.configure do |config|
   config.example_status_persistence_file_path = ".rspec_status"
