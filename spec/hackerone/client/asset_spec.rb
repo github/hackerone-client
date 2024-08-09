@@ -37,7 +37,7 @@ RSpec.describe HackerOne::Client::Asset do
     JSON
 
     stub_request(:get, "https://api.hackerone.com/v1/organizations/14/assets?page%5Bnumber%5D=1&page%5Bsize%5D=100").
-      to_return(body:<<~JSON2)
+      to_return(body: <<~JSON2)
 {
   "data": [
     {
