@@ -1,6 +1,6 @@
 # Hackerone::Client
 
-A limited client library for interacting with HackerOne in Ruby. Currently only supports a few operations:
+A limited client library for interacting with HackerOne in Ruby. Currently supports a few operations:
 
 ```ruby
 client = HackerOne::Client::Api.new("github")
@@ -57,6 +57,23 @@ program.update_policy(policy: "Please submit valid vulnerabilities")
 
 # Gets a program's balance
 program.balance
+
+# Gets a list of structured scopes
+program.structured_scopes
+
+# Gets an organization for a program
+program.organization
+
+# Gets assets for an organization
+program.organization.assets
+
+# Updates an asset for an organization
+asset = program.organization.assets[0]
+asset.update(
+  attributes: {
+    description: "This is the new description"
+  }
+)
 ```
 
 ## State change hooks

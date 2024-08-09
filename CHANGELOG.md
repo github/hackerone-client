@@ -1,3 +1,7 @@
+## [0.23.0] - 2024-08-09
+
+[Add Asset and Organization resources](https://github.com/github/hackerone-client/pull/10) (@jeffgran-dox)
+
 ## [0.22.0] - 2024-01-10
 
 [Update Faraday API call and deprecate support for Ruby <2.6](https://github.com/github/hackerone-client/pull/2) (@maclarel)
