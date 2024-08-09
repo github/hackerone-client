@@ -51,6 +51,39 @@ RSpec.describe HackerOne::Client::Program do
     end
   end
 
+  describe "structured_scopes" do
+    it "returns a list of structured scopes" do
+      stub_request(:get, "https://api.hackerone.com/v1/programs/18969/structured_scopes?page%5Bnumber%5D=1&page%5Bsize%5D=100").
+        to_return(body: <<~JSON)
+{
+  "data": [
+    {
+      "id": "57",
+      "type": "structured-scope",
+      "attributes": {
+        "asset_identifier": "api.example.com",
+        "asset_type": "URL",
+        "confidentiality_requirement": "high",
+        "integrity_requirement": "high",
+        "availability_requirement": "high",
+        "max_severity": "critical",
+        "created_at": "2015-02-02T04:05:06.000Z",
+        "updated_at": "2016-05-02T04:05:06.000Z",
+        "instruction": null,
+        "eligible_for_bounty": true,
+        "eligible_for_submission": true,
+        "reference": "H001001"
+      }
+    }
+  ],
+  "links": {}
+}
+      JSON
+      expect(program.structured_scopes).to be_a(Array)
+      expect(program.structured_scopes.first).to be_a(HackerOne::Client::StructuredScope)
+    end
+  end
+
   describe ".incremental_activities" do
     it "can traverse through the activities of a program" do
       incremental_activities = program.incremental_activities(updated_at_after: DateTime.new(2017, 12, 4, 15, 38), page_size: 3)
