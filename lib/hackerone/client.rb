@@ -207,7 +207,8 @@ module HackerOne
 
       def self.hackerone_api_connection
 
-        unless client_token_name && client_token
+        # binding.pry
+        unless @token_name && @token
           raise NotConfiguredError, "Either set @token_name and @token or HACKERONE_TOKEN_NAME and HACKERONE_TOKEN environment variables"
         end
 
