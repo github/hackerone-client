@@ -60,12 +60,18 @@ module HackerOne
     end
 
     class Api
-      def initialize(program = nil)
+      def initialize(program = nil, token: nil, token_name: nil)
         @program = program
+        @token = token || ENV["HACKERONE_TOKEN"]
+        @token_name = token_name || ENV["HACKERONE_TOKEN_NAME"] 
       end
 
       def program
         @program || HackerOne::Client.program
+      end
+
+      def token_name
+        @token_name || ENV["HACKERONE_TOKEN_NAME"]
       end
 
       def reporters
@@ -200,12 +206,13 @@ module HackerOne
       end
 
       def self.hackerone_api_connection
-        unless ENV["HACKERONE_TOKEN_NAME"] && ENV["HACKERONE_TOKEN"]
-          raise NotConfiguredError, "HACKERONE_TOKEN_NAME HACKERONE_TOKEN environment variables must be set"
+
+        unless client_token_name && client_token
+          raise NotConfiguredError, "Either set @token_name and @token or HACKERONE_TOKEN_NAME and HACKERONE_TOKEN environment variables"
         end
 
         @connection ||= Faraday.new(url: "https://api.hackerone.com/v1") do |faraday|
-          faraday.request(:authorization, :basic, ENV["HACKERONE_TOKEN_NAME"], ENV["HACKERONE_TOKEN"])
+          faraday.request(:authorization, :basic, @token_name, @token)
           faraday.adapter Faraday.default_adapter
         end
       end

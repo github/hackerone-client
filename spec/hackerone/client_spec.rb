@@ -5,6 +5,7 @@ require "time"
 
 RSpec.describe HackerOne::Client do
   let(:api) { HackerOne::Client::Api.new("github") }
+  let(:api_with_credentials) { HackerOne::Client::Api.new("github", token_name:"foo", token:"bar") }
   let(:point_in_time) { DateTime.parse("2017-02-11T16:00:44-10:00") }
 
   before(:all) do
@@ -23,7 +24,19 @@ RSpec.describe HackerOne::Client do
       end
     end
 
-    it "requires credential env vars" do
+    it "succeeds when explicit credentials are provided" do
+      begin
+        ENV["HACKERONE_TOKEN_NAME"] = nil
+        ENV["HACKERONE_TOKEN"] = nil
+        # expect it to succeed
+        expect { api_with_credentials.report(200) }.to_not raise_error
+      ensure
+        ENV["HACKERONE_TOKEN_NAME"] = "foo"
+        ENV["HACKERONE_TOKEN"] = "bar"
+      end
+    end
+
+    it "falls back to env vars if no explicit credentials are provided" do
       begin
         ENV["HACKERONE_TOKEN_NAME"] = nil
         ENV["HACKERONE_TOKEN"] = nil
@@ -35,6 +48,7 @@ RSpec.describe HackerOne::Client do
         ENV["HACKERONE_TOKEN"] = "bar"
       end
     end
+
   end
 
   context "#report" do
