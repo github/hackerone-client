@@ -48,7 +48,7 @@ module HackerOne
 
     class << self
       ATTRS = [:low_range, :medium_range, :high_range, :critical_range].freeze
-      attr_accessor :program
+      attr_accessor :program, :token, :token_name
       attr_reader *ATTRS
 
       ATTRS.each do |attr|
@@ -63,7 +63,16 @@ module HackerOne
       def initialize(program = nil, token: nil, token_name: nil)
         @program = program
         @token = token || ENV["HACKERONE_TOKEN"]
-        @token_name = token_name || ENV["HACKERONE_TOKEN_NAME"] 
+        @token_name = token_name || ENV["HACKERONE_TOKEN_NAME"]
+    
+        # Set class-level token and token_name if provided
+        if token
+          HackerOne::Client.token = token
+        end
+    
+        if token_name
+          HackerOne::Client.token_name = token_name
+        end
       end
 
       def program
@@ -204,16 +213,14 @@ module HackerOne
           raise RuntimeError, "Not sure what to do here: #{response.body}"
         end
       end
-
+      
       def self.hackerone_api_connection
-
-        # binding.pry
-        unless @token_name && @token
-          raise NotConfiguredError, "Either set @token_name and @token or HACKERONE_TOKEN_NAME and HACKERONE_TOKEN environment variables"
+        unless HackerOne::Client.token_name && HackerOne::Client.token
+          raise NotConfiguredError, "Either set token_name and token or HACKERONE_TOKEN_NAME and HACKERONE_TOKEN environment variables"
         end
-
+      
         @connection ||= Faraday.new(url: "https://api.hackerone.com/v1") do |faraday|
-          faraday.request(:authorization, :basic, @token_name, @token)
+          faraday.request(:authorization, :basic, HackerOne::Client.token_name, HackerOne::Client.token)
           faraday.adapter Faraday.default_adapter
         end
       end

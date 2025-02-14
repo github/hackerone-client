@@ -4,16 +4,21 @@ require "spec_helper"
 require "time"
 
 RSpec.describe HackerOne::Client do
-  let(:api) { HackerOne::Client::Api.new("github") }
-  let(:api_with_credentials) { HackerOne::Client::Api.new("github", token_name:"foo", token:"bar") }
   let(:point_in_time) { DateTime.parse("2017-02-11T16:00:44-10:00") }
-
-  before(:all) do
-    ENV["HACKERONE_TOKEN_NAME"] = "foo"
-    ENV["HACKERONE_TOKEN"] = "bar"
-  end
+  # Remove this let definition as it conflicts with the one in the report context
+  # let(:api) { HackerOne::Client::Api.new("github") }
 
   context "configuration" do
+    it "raises error when no credentials are available" do
+      ENV["HACKERONE_TOKEN"] = nil
+      ENV["HACKERONE_TOKEN_NAME"] = nil
+      
+      client = HackerOne::Client::Api.new("github")
+      expect {
+        client.report(200)
+      }.to raise_error(HackerOne::Client::NotConfiguredError)
+    end
+
     it "rejects invalid range values for risk classification" do
       begin
         expect { HackerOne::Client.low_range = "fred" }.to raise_error(ArgumentError)
@@ -24,37 +29,37 @@ RSpec.describe HackerOne::Client do
       end
     end
 
-    it "succeeds when explicit credentials are provided" do
-      begin
-        ENV["HACKERONE_TOKEN_NAME"] = nil
-        ENV["HACKERONE_TOKEN"] = nil
-        # expect it to succeed
-        expect { api_with_credentials.report(200) }.to_not raise_error
-      ensure
-        ENV["HACKERONE_TOKEN_NAME"] = "foo"
-        ENV["HACKERONE_TOKEN"] = "bar"
-      end
+    it "initializes successfully with explicit credentials" do
+      client = HackerOne::Client::Api.new("github", token: "mytoken", token_name: "myname")
+      expect(client.instance_variable_get(:@token)).to eq("mytoken")
+      expect(client.instance_variable_get(:@token_name)).to eq("myname")
     end
 
-    it "falls back to env vars if no explicit credentials are provided" do
-      begin
-        ENV["HACKERONE_TOKEN_NAME"] = nil
-        ENV["HACKERONE_TOKEN"] = nil
-        expect {
-          api.report(200)
-        }.to raise_error(HackerOne::Client::NotConfiguredError)
-      ensure
-        ENV["HACKERONE_TOKEN_NAME"] = "foo"
-        ENV["HACKERONE_TOKEN"] = "bar"
-      end
+    it "falls back to ENV vars when no explicit credentials given" do
+      ENV["HACKERONE_TOKEN"] = "envtoken"
+      ENV["HACKERONE_TOKEN_NAME"] = "envname"
+      
+      client = HackerOne::Client::Api.new("github")
+      expect(client.instance_variable_get(:@token)).to eq("envtoken")
+      expect(client.instance_variable_get(:@token_name)).to eq("envname")
+    ensure
+      ENV["HACKERONE_TOKEN"] = nil
+      ENV["HACKERONE_TOKEN_NAME"] = nil
     end
 
   end
 
   context "#report" do
+    # This setup should work with the VCR cassette
+    let(:api) { HackerOne::Client::Api.new("github", token: "bar", token_name: "foo") }
+
     it "fetches and populates a report" do
+      # Add debug to verify credentials
+      puts "Debug: token=#{api.instance_variable_get(:@token)}, token_name=#{api.instance_variable_get(:@token_name)}"
+      
       VCR.use_cassette(:report) do
-        expect(api.report(200)).to_not be_nil
+        report = api.report(200)
+        expect(report).to_not be_nil
       end
     end
 
