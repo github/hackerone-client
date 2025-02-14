@@ -77,6 +77,8 @@ RSpec.describe HackerOne::Client do
   end
 
   context "#create_report" do
+    let(:api) { HackerOne::Client::Api.new("github", token: "foo", token_name: "bar") }
+
     it "raises an error if no program is supplied" do
       expect {
         HackerOne::Client::Api.new.create_report(title: "hi", summary: "hi", impact: "string", severity_rating: "none", source: "api")
@@ -85,7 +87,15 @@ RSpec.describe HackerOne::Client do
 
     it "creates a new report" do
       VCR.use_cassette(:create_report) do
-        expect(api.create_report(title: "hi", summary: "hi", impact: "string", severity_rating: "none", source: "api")).to_not be_nil
+        report = api.create_report(
+          title: "hi",
+          summary: "hi",
+          impact: "string",
+          severity_rating: "none",
+          source: "api"
+        )
+        expect(report).to_not be_nil
+        expect(report).to be_kind_of(HackerOne::Client::Report)
       end
     end
 
@@ -99,6 +109,8 @@ RSpec.describe HackerOne::Client do
   end
 
   context "#reports" do
+    let(:api) { HackerOne::Client::Api.new("github", token: "foo", token_name: "bar") }
+    
     it "raises an error if no program is supplied" do
       expect { HackerOne::Client::Api.new.reports }.to raise_error(ArgumentError)
     end
@@ -116,7 +128,9 @@ RSpec.describe HackerOne::Client do
 
     it "returns new reports for a given program as default" do
       VCR.use_cassette(:report_list) do
-        expect(api.reports(since: point_in_time)).to_not be_empty
+        reports = api.reports(since: point_in_time)
+        expect(reports).to_not be_empty
+        expect(reports.first).to be_kind_of(HackerOne::Client::Report)
       end
     end
 
