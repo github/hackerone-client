@@ -34,7 +34,6 @@ module HackerOne
     DEFAULT_CRITICAL_RANGE = 5000...100_000_000
 
     LENIENT_MODE_ENV_VARIABLE = "HACKERONE_CLIENT_LENIENT_MODE"
-
     REPORT_STATES = %w(
       new
       triaged
@@ -64,12 +63,11 @@ module HackerOne
         @program = program
         @token = token || ENV["HACKERONE_TOKEN"]
         @token_name = token_name || ENV["HACKERONE_TOKEN_NAME"]
-    
         # Set class-level token and token_name if provided
         if token
           HackerOne::Client.token = token
         end
-    
+
         if token_name
           HackerOne::Client.token_name = token_name
         end
@@ -213,12 +211,12 @@ module HackerOne
           raise RuntimeError, "Not sure what to do here: #{response.body}"
         end
       end
-      
+
       def self.hackerone_api_connection
         unless HackerOne::Client.token_name && HackerOne::Client.token
           raise NotConfiguredError, "Either set token_name and token or HACKERONE_TOKEN_NAME and HACKERONE_TOKEN environment variables"
         end
-      
+
         @connection ||= Faraday.new(url: "https://api.hackerone.com/v1") do |faraday|
           faraday.request(:authorization, :basic, HackerOne::Client.token_name, HackerOne::Client.token)
           faraday.adapter Faraday.default_adapter

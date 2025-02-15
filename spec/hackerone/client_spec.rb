@@ -12,7 +12,7 @@ RSpec.describe HackerOne::Client do
     it "raises error when no credentials are available" do
       ENV["HACKERONE_TOKEN"] = nil
       ENV["HACKERONE_TOKEN_NAME"] = nil
-      
+
       client = HackerOne::Client::Api.new("github")
       expect {
         client.report(200)
@@ -38,7 +38,7 @@ RSpec.describe HackerOne::Client do
     it "falls back to ENV vars when no explicit credentials given" do
       ENV["HACKERONE_TOKEN"] = "envtoken"
       ENV["HACKERONE_TOKEN_NAME"] = "envname"
-      
+
       client = HackerOne::Client::Api.new("github")
       expect(client.instance_variable_get(:@token)).to eq("envtoken")
       expect(client.instance_variable_get(:@token_name)).to eq("envname")
@@ -56,7 +56,7 @@ RSpec.describe HackerOne::Client do
     it "fetches and populates a report" do
       # Add debug to verify credentials
       puts "Debug: token=#{api.instance_variable_get(:@token)}, token_name=#{api.instance_variable_get(:@token_name)}"
-      
+
       VCR.use_cassette(:report) do
         report = api.report(200)
         expect(report).to_not be_nil
@@ -110,7 +110,7 @@ RSpec.describe HackerOne::Client do
 
   context "#reports" do
     let(:api) { HackerOne::Client::Api.new("github", token: "foo", token_name: "bar") }
-    
+
     it "raises an error if no program is supplied" do
       expect { HackerOne::Client::Api.new.reports }.to raise_error(ArgumentError)
     end
