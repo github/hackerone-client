@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       Authorization:
-      - Basic nope=
+      - Basic Zm9vOmJhcg== # This is base64 encoded of "foo:bar"
       User-Agent:
       - Faraday v0.11.0
       Accept-Encoding:
