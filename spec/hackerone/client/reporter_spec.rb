@@ -3,11 +3,17 @@
 require "spec_helper"
 
 RSpec.describe HackerOne::Client::Report do
-  let(:api) { HackerOne::Client::Api.new("github") }
+  let(:api) { HackerOne::Client::Api.new("github", token: "bar", token_name: "foo") }
 
-  before(:all) do
-    ENV["HACKERONE_TOKEN_NAME"] = "foo"
-    ENV["HACKERONE_TOKEN"] = "bar"
+  before(:each) do
+    # Initialize the API client before running tests
+    api
+  end
+
+  after(:each) do
+    # Clear both cached programs and configuration
+    HackerOne::Client.instance_variable_set(:@token, nil)
+    HackerOne::Client.instance_variable_set(:@token_name, nil)
   end
 
   let(:reporters) do
