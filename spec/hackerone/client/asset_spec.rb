@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+require "webmock/rspec"
 
 RSpec.describe HackerOne::Client::Asset do
-  before(:all) do
-    ENV["HACKERONE_TOKEN_NAME"] = "foo"
-    ENV["HACKERONE_TOKEN"] = "bar"
-  end
+  let(:api) { HackerOne::Client::Api.new("github", token: "bar", token_name: "foo") }
+
   before(:each) do
+    # Initialize the API client before running tests
+    api
+
+    # Stub the HTTP request for fetching the program
     stub_request(:get, "https://api.hackerone.com/v1/programs/18969").
       to_return(body: <<~JSON)
 {
@@ -36,6 +39,7 @@ RSpec.describe HackerOne::Client::Asset do
 }
     JSON
 
+    # Stub the HTTP request for fetching the assets
     stub_request(:get, "https://api.hackerone.com/v1/organizations/14/assets?page%5Bnumber%5D=1&page%5Bsize%5D=100").
       to_return(body: <<~JSON2)
 {
@@ -114,17 +118,35 @@ RSpec.describe HackerOne::Client::Asset do
   "links": {}
 }
     JSON2
+
+    # Stub the HTTP request for fetching the user's programs
+    stub_request(:get, "https://api.hackerone.com/v1/me/programs").
+      to_return(body: <<~JSON3)
+{
+  "data": [
+    {
+      "id": "18969",
+      "type": "program",
+      "attributes": {
+        "handle": "github",
+        "created_at": "2016-02-02T04:05:06.000Z",
+        "updated_at": "2016-02-02T04:05:06.000Z"
+      }
+    }
+  ]
+}
+    JSON3
   end
 
   after(:each) do
-    # clear cached programs to prevent contaminatin between tests
+    # Clear both cached programs and configuration
     HackerOne::Client::Program.instance_variable_set(:@my_programs, nil)
+    HackerOne::Client.instance_variable_set(:@token, nil)
+    HackerOne::Client.instance_variable_set(:@token_name, nil)
   end
 
   let(:program) do
-    VCR.use_cassette(:programs) do
-      HackerOne::Client::Program.find("github")
-    end
+    HackerOne::Client::Program.find("github")
   end
 
   let(:organization) do

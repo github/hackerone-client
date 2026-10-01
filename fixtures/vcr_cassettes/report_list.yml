@@ -8,13 +8,15 @@ http_interactions:
       string: ''
     headers:
       Authorization:
-      - Basic nope=
+      - Basic Zm9vOmJhcg== # This is base64 encoded "foo:bar"
       User-Agent:
-      - Faraday v0.11.0
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      - Faraday v1.0.1
+      Content-Type:
+      - application/json
       Accept:
       - "*/*"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
     status:
       code: 200
